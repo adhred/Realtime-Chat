@@ -21,6 +21,7 @@ def generate_unique_code(Length):
    return code
 
    
+#MAIN
 
 @app.route("/", methods =["POST", "GET"])
 def main():
@@ -55,6 +56,7 @@ def main():
  
   return render_template("main.html")
 
+#ROOM
 
 @app.route("/room")
 def room():
@@ -64,6 +66,7 @@ def room():
       return redirect(url_for("main"))
    return render_template("room.html", code=room, messages= rooms[room]["messages"])
 
+#MESSAGES
 
 @socketio.on("message")
 def message(data):
@@ -80,6 +83,8 @@ def message(data):
    send(content, to=room)
    rooms[room]["messages"].append(content)
    print(f"{session.get('name')} said: {data['data']}")
+
+#CONNECT
 
 @socketio.on("connect")
 def connect(auth):
@@ -98,9 +103,9 @@ def connect(auth):
    rooms[room]["members"] += 1
    print(f"{name} joined room {room}")
 
+#DISCONNECT
 
 @socketio.on("disconnect")
-
 def disconnect():
    room = session.get("room")
    name = session.get("name")
