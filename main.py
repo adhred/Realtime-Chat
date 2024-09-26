@@ -29,27 +29,36 @@ def main():
   session.clear()
 
   if request.method == "POST":
-    name= request.form.get("name")
+    name = request.form.get("name")
     code = request.form.get("code")
     join = request.form.get("join", False)
-    create= request.form.get("create", False)
+    create = request.form.get("create", False)
+    public = request.form.get("public", False)
 
     if not name:
        return render_template("main.html", error="Please enter a name.", code=code, name=name)
 
-    if join != False and not code:
-       return render_template("main.html", error="Please enter the room code.",code=code, name=name)
+    if join != False and not code and not public:
+       return render_template("main.html", error="Please enter the room code.", code=code, name=name)
 
     room = code
-
-    if create != False:
-       room = generate_unique_code(4)  
-       rooms[room] = {"members":0,"messages": []}
-
-    elif code not in rooms:
-       return render_template("main.html", error= "Room does not exist",code=code, name=name)
     
-    session["room"]= room
+    if public:
+       room = "public"
+    elif join != False:
+       if not code:
+          return render_template("main.html", error="Enter room code", code=code, name=name)
+    elif create != False:
+       room = generate_unique_code(4)
+    else:
+       return render_template("main.html", error="Invalid action", code=code, name=name)
+
+    if room not in rooms:
+       if room != "public" and join != False:
+          return render_template("main.html", error="Room does not exist", code=code, name=name)
+       rooms[room] = {"members": 0, "messages": []}
+    
+    session["room"] = room
     session["name"] = name
 
     return redirect(url_for("room"))
@@ -64,7 +73,7 @@ def room():
    room = session.get("room")
    if room is None or session.get("name") is None or room not in rooms:
       return redirect(url_for("main"))
-   return render_template("room.html", code=room, messages= rooms[room]["messages"])
+   return render_template("room.html", code=room, messages=rooms[room]["messages"])
 
 #MESSAGES
 
@@ -114,10 +123,10 @@ def disconnect():
 
    if room in rooms:
       rooms[room]["members"] -= 1
-      if rooms[room]["members"] <=0:
+      if rooms[room]["members"] <= 0 and room != "public":
          del rooms[room]
 
-   send({"name": name, "message": "has left the room"}, to= room)
+   send({"name": name, "message": "has left the room"}, to=room)
    print(f"{name} has left the room {room}")
 
 if __name__ == "__main__":
