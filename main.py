@@ -36,10 +36,10 @@ def main():
     public = request.form.get("public", False)
 
     if not name:
-       return render_template("main.html", error="Please enter a name.", code=code, name=name)
+       return render_template("main.html", error="Please enter a name", code=code, name=name)
 
     if join != False and not code and not public:
-       return render_template("main.html", error="Please enter the room code.", code=code, name=name)
+       return render_template("main.html", error="Please enter the room code", code=code, name=name)
 
     room = code
     

@@ -1,25 +1,23 @@
 {% extends 'base.html' %}
 {% block content %}
-<form method="post" class="buttons"> 
-<h3>Enter the Chat Room</h3>
-<div>
-    <label>Name: </label>
-    <input type="text" placeholder ="Pick a name" name="name" value="{{name}}"/>
+<div class="container">
+    <form method="post" class="buttons"> 
+        <h3>Random Chatroom</h3>
+        <div class="input-group">
+            <input type="text" placeholder="Pick a name" name="name" value="{{name}}"/>
+        </div>
+        <div class="input-group join">
+            <input type="text" placeholder="Room code" name="code" value="{{code}}"/>
+            <button type="submit" name="join" class="join-btn">Join room</button>
+        </div>
+        <button type="submit" name="public" value="true" class="btn">Join Public chat</button>
+        <button type="submit" name="create" class="btn create-btn">Create a room</button>
+        <a href="https://github.com/adhred" class="link">Github</a>
+        {% if error %}
+        <ul class="error">
+            <li>{{error}}</li>
+        </ul>
+        {% endif %}
+    </form>
 </div>
-<div class="join">
-    <input type="text" placeholder ="Room code" name="code" value="{{code}}"/>
-    <button type="submit" name="join">Join a room</button>
-</div>
-
-<button type="submit" name="public" value="true">Join Public chat</button>
-
-<button type= "submit" name="create" class="create-btn">Create a room</button>
-
-<a href="https://www.w3schools.com/">Visit W3Schools.com!</a>
-{% if error %}
-<ul>
-    <li>{{error}}</li>
-</ul>
-{% endif %}
-</form>
 {% endblock %}
