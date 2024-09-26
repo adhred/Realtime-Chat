@@ -2,9 +2,9 @@
 {% block content %}
 <div class="message-box">
     <h2>Chat room: {{code}}</h2>
-    <div class = "messages" id = "messages"></div>
-    <div class ="inputs">
-        <input type="text" rows="3" placeholder="Message" name="message" id="message"/>
+    <div class="messages" id="messages"></div>
+    <div class="inputs">
+        <input type="text" placeholder="Message" name="message" id="message" onkeypress="checkEnter(event)"/>
         <button type="button" name="send" id="send-btn" onclick="sendMessage()">
             Send
         </button>
@@ -13,39 +13,51 @@
 <script type="text/javascript">
     var socketio = io();
 
-    const messages = document.getElementById("messages")
+    const messages = document.getElementById("messages");
 
-    const createMessage = (name,msg) => {
+    const createMessage = (name, msg) => {
         const content = `
         <div class="text">
             <span>
                 <strong>${name} </strong>: ${msg}
             </span>
             <span class="muted">
-                ${new Date().toLocaleString()}
+                ${formatDate(new Date())}
             </span>
         </div>
         `;
 
         messages.innerHTML += content;
+        messages.scrollTop = messages.scrollHeight;
     };
-
+    
+    const formatDate = (date) => {
+        return date.toLocaleString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+    };
+    
 
     socketio.on("message", (data) => {
         createMessage(data.name, data.message);
     });
 
     const sendMessage = () => {
-        const message = document.getElementById("message")
+        const message = document.getElementById("message");
         if (message.value == "") return;
-        socketio.emit("message", {data: message.value})
-        message.value ="";
+        socketio.emit("message", {data: message.value});
+        message.value = "";
     };
+
+    const checkEnter = (event) => {  // Function to check for Enter key
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    };
+    
 </script>
 
 {% for msg in messages %}
-    <script type= "text/javascript">
-        createMessage("{{msg.name}}","{{msg.message}}");
+    <script type="text/javascript">
+        createMessage("{{msg.name}}", "{{msg.message}}");
     </script>
 {% endfor %}
 {% endblock %}
