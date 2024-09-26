@@ -10,10 +10,15 @@
     <input type="text" placeholder ="Room code" name="code" value="{{code}}"/>
     <button type="submit" name="join">Join a room</button>
 </div>
+
+<button type="submit" name="public" value="true">Join Public chat</button>
+
 <button type= "submit" name="create" class="create-btn">Create a room</button>
+
+<a href="https://www.w3schools.com/">Visit W3Schools.com!</a>
 {% if error %}
 <ul>
-    <il>{{error}}</il>
+    <li>{{error}}</li>
 </ul>
 {% endif %}
 </form>
